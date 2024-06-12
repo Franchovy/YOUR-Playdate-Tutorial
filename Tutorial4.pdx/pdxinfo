@@ -1,0 +1,8 @@
+name=Tutorial4
+author=Franchovy
+description=Time to learn some Lua!
+bundleID=com.Franchovy.tutorial4
+version=1.0
+buildNumber=1
+pdxversion=20400
+buildtime=770069915

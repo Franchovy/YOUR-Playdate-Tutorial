@@ -14,22 +14,54 @@ function Player:init()
     velocity = 0
 end
 
+function Player:setParticlesSprite(particlesSprite)
+    self.particlesSprite = particlesSprite
+end
+
 function Player:update()
     Player.super.update(self)
 
+    -- Get Crank Position for rotating the sprite
+
     local crankPosition = playdate.getCrankPosition()
+
     self:setRotation(crankPosition)
 
-    if playdate.buttonIsPressed(playdate.kButtonA) then
+    -- Get A button state for accelerating or not
+
+    local isAButtonPressed = playdate.buttonIsPressed(playdate.kButtonA)
+
+    if isAButtonPressed then
         velocity = 5
     else
         velocity = 0
     end
 
+    -- Calculate the velocity using the crank angle
+
     local crankPositionRadians = math.rad(crankPosition)
     local vX, vY = velocity * math.cos(crankPositionRadians), velocity * math.sin(crankPositionRadians)
 
+    if self.particlesSprite then
+        -- Position the particles sprite behind the player
+
+        local distanceFromCenter = -36
+
+        local x = self.x + distanceFromCenter * math.cos(crankPositionRadians)
+        local y = self.y + distanceFromCenter * math.sin(crankPositionRadians)
+
+        self.particlesSprite:moveTo(x, y)
+
+        -- Rotate the particles sprite
+
+        self.particlesSprite:setRotation(crankPosition)
+    end
+
+    -- Move the player
+
     self:moveBy(vX, vY)
+
+    -- Teleport the player across the screen if they leave the bounds
 
     if self.x < -10 then
         self:moveTo(410, self.y)

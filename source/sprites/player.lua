@@ -2,7 +2,7 @@ local gfx <const> = playdate.graphics
 
 class("Player").extends(gfx.sprite)
 
-local imageSpritePlayer = gfx.image.new("assets/ship")
+local imageSpritePlayer = gfx.image.new(assets.ship)
 
 local velocity = 0
 

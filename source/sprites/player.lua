@@ -55,6 +55,14 @@ function Player:update()
         -- Rotate the particles sprite
 
         self.particlesSprite:setRotation(crankPosition)
+
+        -- Set the particles sprite animation
+
+        if isAButtonPressed then
+            self.particlesSprite:startAnimation()
+        else
+            self.particlesSprite:endAnimation()
+        end
     end
 
     -- Move the player

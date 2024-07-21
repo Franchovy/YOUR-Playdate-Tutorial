@@ -33,10 +33,18 @@ function Particles:init()
 end
 
 function Particles:startAnimation()
+    if self.state == animationStates.pre or self.state == animationStates.loop then
+        return
+    end
+
     self.state = animationStates.pre
 end
 
 function Particles:endAnimation()
+    if self.state == animationStates.post or self.state == animationStates.none then
+        return
+    end
+
     self.state = animationStates.post
 end
 

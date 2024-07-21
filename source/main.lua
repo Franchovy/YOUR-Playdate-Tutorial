@@ -19,16 +19,6 @@ local function init()
     player:setParticlesSprite(particles)
 
     showMenu()
-
-    playdate.timer.performAfterDelay(1000, function()
-        -- start animation
-        particles:startAnimation()
-    end)
-
-    playdate.timer.performAfterDelay(4000, function()
-        -- end animation
-        --particles:endAnimation()
-    end)
 end
 
 function playdate.update()

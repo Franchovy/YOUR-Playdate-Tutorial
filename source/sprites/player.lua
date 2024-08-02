@@ -37,6 +37,16 @@ function Player:update()
         velocity = 0
     end
 
+    -- Get B button state for spawning bullet
+
+    local isBButtonPressed = playdate.buttonJustPressed(playdate.kButtonB)
+
+    if isBButtonPressed then
+        -- Spawn Bullet
+        local bullet = Bullet()
+        bullet:spawn(self.x, self.y, 5, 5)
+    end
+
     -- Calculate the velocity using the crank angle
 
     local crankPositionRadians = math.rad(crankPosition)

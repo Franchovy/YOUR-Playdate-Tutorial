@@ -18,12 +18,19 @@ function Player:setParticlesSprite(particlesSprite)
     self.particlesSprite = particlesSprite
 end
 
+local function getRotationComponents(rotationRadians, velocity)
+    return velocity * math.cos(rotationRadians), velocity * math.sin(rotationRadians)
+end
+
 function Player:update()
     Player.super.update(self)
 
     -- Get Crank Position for rotating the sprite
 
     local crankPosition = playdate.getCrankPosition()
+    local crankPositionRadians = math.rad(crankPosition)
+
+    -- Set player rotation
 
     self:setRotation(crankPosition)
 
@@ -42,25 +49,27 @@ function Player:update()
     local isBButtonPressed = playdate.buttonJustPressed(playdate.kButtonB)
 
     if isBButtonPressed then
+        local velX, velY = getRotationComponents(crankPositionRadians, 7.5)
+
         -- Spawn Bullet
         local bullet = Bullet()
-        bullet:spawn(self.x, self.y, 5, 5)
+        bullet:spawn(self.x, self.y, velX, velY)
     end
 
-    -- Calculate the velocity using the crank angle
+    -- Move the player according to crank rotation
 
-    local crankPositionRadians = math.rad(crankPosition)
-    local vX, vY = velocity * math.cos(crankPositionRadians), velocity * math.sin(crankPositionRadians)
+    local vX, vY = getRotationComponents(crankPositionRadians, velocity)
+    self:moveBy(vX, vY)
+
+    -- Position the particles according to crank rotation
 
     if self.particlesSprite then
         -- Position the particles sprite behind the player
 
         local distanceFromCenter = -36
+        local x, y = getRotationComponents(crankPositionRadians, distanceFromCenter)
 
-        local x = self.x + distanceFromCenter * math.cos(crankPositionRadians)
-        local y = self.y + distanceFromCenter * math.sin(crankPositionRadians)
-
-        self.particlesSprite:moveTo(x, y)
+        self.particlesSprite:moveTo(self.x + x, self.y + y)
 
         -- Rotate the particles sprite
 
@@ -74,10 +83,6 @@ function Player:update()
             self.particlesSprite:endAnimation()
         end
     end
-
-    -- Move the player
-
-    self:moveBy(vX, vY)
 
     -- Teleport the player across the screen if they leave the bounds
 

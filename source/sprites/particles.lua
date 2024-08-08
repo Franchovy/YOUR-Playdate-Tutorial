@@ -49,20 +49,20 @@ function Particles:update()
 
     -- Change state based on state and index
 
-    if self.state == animationStates.pre and self.index >= indexEnd then
+    if self.state == animationStates.pre and self.index == indexEnd then
         self.state = animationStates.loop
     end
 
-    if self.state == animationStates.post and self.index >= indexEnd then
+    if self.state == animationStates.post and self.index == indexEnd then
         self.state = animationStates.none
     end
 
     -- Loop through image table
 
-    if self.index >= indexStart and self.index < indexEnd then
-        self.index += 1
-    else
+    if self.index < indexStart or self.index > indexEnd then
         self.index = indexStart
+    else
+        self.index += 1
     end
 
     self:setImage(imageTable[self.index])

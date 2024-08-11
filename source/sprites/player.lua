@@ -52,8 +52,7 @@ function Player:update()
         local velX, velY = getRotationComponents(crankPositionRadians, 7.5)
 
         -- Spawn Bullet
-        local bullet = Bullet()
-        bullet:spawn(self.x, self.y, velX, velY)
+        local _ = Bullet.spawn(self.x, self.y, velX, velY)
     end
 
     -- Move the player according to crank rotation

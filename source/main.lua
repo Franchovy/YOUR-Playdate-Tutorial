@@ -7,11 +7,21 @@ import "assets"
 import "sprites"
 import "menu"
 
+-- Playdate Libraries
+
 local gfx <const> = playdate.graphics
 local sprite <const> = gfx.sprite
 
+-- Instantiate classes
+
 local player = Player()
 local particles = Particles()
+
+-- Create Sprite Lists
+
+Bullet.createSpriteList()
+
+-- Init Function
 
 local function init()
     player:add()
@@ -21,6 +31,8 @@ local function init()
     showMenu()
 end
 
+-- Update Function
+
 function playdate.update()
     sprite.update()
     playdate.timer.updateTimers()
@@ -29,5 +41,7 @@ function playdate.update()
         hideMenu()
     end
 end
+
+-- Game Start
 
 init()

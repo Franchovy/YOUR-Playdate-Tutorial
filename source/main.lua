@@ -2,6 +2,7 @@ import "CoreLibs/object"
 import "CoreLibs/sprites"
 import "CoreLibs/graphics"
 import "CoreLibs/timer"
+import "CoreLibs/animation"
 
 import "assets"
 import "sprites"
@@ -27,6 +28,12 @@ local function init()
     player:add()
     particles:add()
     player:setParticlesSprite(particles)
+
+    -- Test: Add enemy to game
+
+    local enemy = Enemy()
+    enemy:moveTo(200, 120)
+    enemy:add()
 
     showMenu()
 end

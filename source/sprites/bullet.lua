@@ -24,6 +24,12 @@ function Bullet:init()
 
     self.velocityX = 0
     self.velocityY = 0
+
+    self:setCollideRect(0, 0, self:getSize())
+end
+
+function Bullet:collisionResponse(other)
+    return gfx.sprite.kCollisionTypeOverlap
 end
 
 function Bullet:destroy()
@@ -53,5 +59,15 @@ end
 
 function Bullet:update()
     -- Update position based on velocity
-    self:moveBy(self.velocityX, self.velocityY)
+    
+    local _, _, collisions = self:moveWithCollisions(self.x + self.velocityX, self.y + self.velocityY)
+
+    for _, collision in pairs(collisions) do
+        local other = collision.other
+
+        if getmetatable(other).class == Enemy then
+            other:destroy()
+            self:destroy()
+        end
+    end
 end

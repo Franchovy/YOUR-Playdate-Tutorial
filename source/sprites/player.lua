@@ -10,6 +10,7 @@ function Player:init()
     Player.super.init(self, imageSpritePlayer)
 
     self:moveTo(300, 160)
+    self:setCollideRect(0, 0, self:getSize())
 
     velocity = 0
 end

@@ -7,6 +7,7 @@ import "CoreLibs/animation"
 import "assets"
 import "sprites"
 import "menu"
+import "utils"
 
 -- Playdate Libraries
 

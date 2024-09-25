@@ -9,6 +9,8 @@ local velocity = 0
 function Player:init()
     Player.super.init(self, imageSpritePlayer)
 
+    Player.instance = self
+
     self:moveTo(300, 160)
     self:setCollideRect(0, 0, self:getSize())
 
@@ -17,10 +19,6 @@ end
 
 function Player:setParticlesSprite(particlesSprite)
     self.particlesSprite = particlesSprite
-end
-
-local function getRotationComponents(rotationRadians, velocity)
-    return velocity * math.cos(rotationRadians), velocity * math.sin(rotationRadians)
 end
 
 function Player:update()

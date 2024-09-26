@@ -18,6 +18,7 @@ local sprite <const> = gfx.sprite
 
 local player = Player()
 local particles = Particles()
+local enemySpawner = Spawner(Enemy, Enemy.spawnRatePerTick)
 
 -- Create Sprite Lists
 
@@ -29,6 +30,7 @@ local function init()
     player:add()
     particles:add()
     player:setParticlesSprite(particles)
+    enemySpawner:start()
 
     -- Test: Add enemy to game
 
@@ -42,6 +44,8 @@ end
 -- Update Function
 
 function playdate.update()
+    enemySpawner:update()
+
     sprite.update()
     playdate.timer.updateTimers()
 

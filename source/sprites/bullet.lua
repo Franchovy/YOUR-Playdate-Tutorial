@@ -3,7 +3,7 @@ local gfx <const> = playdate.graphics
 -- Local Constants
 
 local imageBullet <const> = gfx.image.new(assets.bullet)
-local spriteListBulletCount <const> = 10
+local spriteListBulletCount <const> = 25
 
 -- Local Variables
 
@@ -54,12 +54,12 @@ function Bullet.spawn(posX, posY, velX, velY)
     bullet.velocityX = velX
     bullet.velocityY = velY
 
-    bullet.destroyTimer = playdate.timer.new(1000, bullet.destroy, bullet)
+    bullet.destroyTimer = playdate.timer.new(4000, bullet.destroy, bullet)
 end
 
 function Bullet:update()
     -- Update position based on velocity
-    
+
     local _, _, collisions = self:moveWithCollisions(self.x + self.velocityX, self.y + self.velocityY)
 
     for _, collision in pairs(collisions) do

@@ -6,6 +6,8 @@ local speed <const> = 1
 
 class("Enemy").extends(gfx.sprite)
 
+Enemy.spawnRatePerTick = 0.01
+
 function Enemy:init()
     Enemy.super.init(self, imagetableEnemy[1])
 

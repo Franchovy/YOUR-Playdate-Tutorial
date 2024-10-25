@@ -14,6 +14,10 @@ import "utils"
 local gfx <const> = playdate.graphics
 local sprite <const> = gfx.sprite
 
+-- Get the default font
+
+local fontDefault <const> = gfx.getFont()
+
 -- Instantiate classes
 
 local player = Player()
@@ -48,6 +52,8 @@ function playdate.update()
 
     sprite.update()
     playdate.timer.updateTimers()
+
+    fontDefault:drawTextAligned("" .. Score.read(), 390, 8, kTextAlignment.right)
 
     if playdate.buttonJustPressed(playdate.kButtonA) then
         hideMenu()

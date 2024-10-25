@@ -19,6 +19,8 @@ function Enemy:init()
 end
 
 function Enemy:destroy()
+    Score.update(50)
+
     self:remove()
 end
 

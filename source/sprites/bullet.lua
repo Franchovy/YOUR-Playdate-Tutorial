@@ -40,6 +40,13 @@ function Bullet:destroy()
     -- Add the bullet back to the list
 
     table.insert(spriteListBullet, self)
+
+    -- Remove timer if exists
+
+    if self.destroyTimer then
+        self.destroyTimer:remove()
+        self.destroyTimer = nil
+    end
 end
 
 function Bullet.spawn(posX, posY, velX, velY)

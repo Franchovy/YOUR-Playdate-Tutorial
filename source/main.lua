@@ -31,17 +31,19 @@ Bullet.createSpriteList()
 -- Init Function
 
 local function init()
+    showMenu()
+end
+
+function gameStart()
+    hideMenu()
+
     player:add()
     particles:add()
     player:setParticlesSprite(particles)
     enemySpawner:start()
+end
 
-    -- Test: Add enemy to game
-
-    local enemy = Enemy()
-    enemy:moveTo(200, 120)
-    enemy:add()
-
+function gameEnd()
     showMenu()
 end
 
@@ -55,8 +57,8 @@ function playdate.update()
 
     fontDefault:drawTextAligned("" .. Score.read(), 390, 8, kTextAlignment.right)
 
-    if playdate.buttonJustPressed(playdate.kButtonA) then
-        hideMenu()
+    if isMenuShowing() and playdate.buttonJustPressed(playdate.kButtonA) then
+        gameStart()
     end
 end
 

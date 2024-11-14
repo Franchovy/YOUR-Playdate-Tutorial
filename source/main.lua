@@ -31,20 +31,27 @@ Bullet.createSpriteList()
 -- Init Function
 
 local function init()
+    player:setParticlesSprite(particles)
+
     showMenu()
 end
 
 function gameStart()
     hideMenu()
 
+    gfx.sprite.removeAll()
+
     player:add()
     particles:add()
-    player:setParticlesSprite(particles)
     enemySpawner:start()
 end
 
 function gameEnd()
     showMenu()
+
+    player:remove()
+    particles:remove()
+    enemySpawner:stop()
 end
 
 -- Update Function
@@ -59,6 +66,10 @@ function playdate.update()
 
     if isMenuShowing() and playdate.buttonJustPressed(playdate.kButtonA) then
         gameStart()
+    end
+
+    if not isMenuShowing() and player:hasDied() then
+        gameEnd()
     end
 end
 

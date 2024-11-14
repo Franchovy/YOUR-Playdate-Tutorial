@@ -1,5 +1,7 @@
 local gfx <const> = playdate.graphics
 
+--- @class Player : playdate.graphics.sprite
+Player = {}
 class("Player").extends(gfx.sprite)
 
 local imageSpritePlayer = gfx.image.new(assets.ship)
@@ -11,14 +13,29 @@ function Player:init()
 
     Player.instance = self
 
-    self:moveTo(300, 160)
     self:setCollideRect(0, 0, self:getSize())
 
+    self.collisionResponse = gfx.sprite.kCollisionTypeOverlap
+end
+
+function Player:add()
+    Player.super.add(self)
+
+    self:moveTo(300, 160)
     velocity = 0
+    self._hasDied = false
 end
 
 function Player:setParticlesSprite(particlesSprite)
     self.particlesSprite = particlesSprite
+end
+
+function Player:onDeath()
+    self._hasDied = true
+end
+
+function Player:hasDied()
+    return self._hasDied
 end
 
 function Player:update()
@@ -57,7 +74,14 @@ function Player:update()
     -- Move the player according to crank rotation
 
     local vX, vY = getRotationComponents(crankPositionRadians, velocity)
-    self:moveBy(vX, vY)
+
+    local _, _, collisions = self:moveWithCollisions(self.x + vX, self.y + vY)
+
+    for _, collision in pairs(collisions) do
+        if getmetatable(collision.other).class == Enemy then
+            self:onDeath()
+        end
+    end
 
     -- Position the particles according to crank rotation
 

@@ -67,7 +67,7 @@ function playdate.update()
     sprite.update()
     playdate.timer.updateTimers()
 
-    fontDefault:drawTextAligned("" .. Score.read(), 390, 8, kTextAlignment.right)
+    fontDefault:drawTextAligned(tostring(Score.read()), 390, 8, kTextAlignment.right)
 
     if isMenuShowing() and playdate.buttonJustPressed(playdate.kButtonA) then
         gameStart()
@@ -75,6 +75,11 @@ function playdate.update()
 
     if not isMenuShowing() and player:getHasDied() then
         gameEnd()
+    end
+
+    local timerHumanLostRemainingSeconds = player:getTimerHumanLostRemainingSeconds()
+    if timerHumanLostRemainingSeconds then
+        fontDefault:drawTextAligned(tostring(timerHumanLostRemainingSeconds), 200, 120, kTextAlignment.center)
     end
 end
 

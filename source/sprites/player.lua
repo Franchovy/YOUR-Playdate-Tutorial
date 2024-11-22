@@ -54,7 +54,7 @@ function Player:onTouchEnemy()
     local vX, vY = getRotationComponents(math.random() * 2 * math.pi, 1.5)
     self.spriteHuman:setVelocity(vX, vY)
 
-    self.timerHumanLost = playdate.timer.new(5000, self.onDeath, self)
+    self.timerHumanLost = playdate.timer.new(5999, self.onDeath, self)
 end
 
 function Player:onTouchHuman()
@@ -69,6 +69,14 @@ function Player:onDeath()
     self.timerHumanLost = nil
 
     self.hasDied = true
+end
+
+function Player:getTimerHumanLostRemainingSeconds()
+    if not self.timerHumanLost then
+        return
+    end
+
+    return math.floor((self.timerHumanLost.duration - self.timerHumanLost.currentTime) / 1000)
 end
 
 function Player:getHasDied()

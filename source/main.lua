@@ -46,6 +46,8 @@ function gameStart()
     player:add()
     particles:add()
     enemySpawner:start()
+
+    Score.reset()
 end
 
 function gameEnd()

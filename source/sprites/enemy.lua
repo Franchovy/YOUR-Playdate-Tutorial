@@ -27,7 +27,7 @@ end
 function Enemy:update()
     -- Get the player
     local player = Player.instance
-    if player and not player:hasDied() then
+    if player and not player:getHasDied() then
         -- Calculate path to player
         local targetX, targetY = player.x, player.y
         local angle = math.atan(targetY - self.y, targetX - self.x)

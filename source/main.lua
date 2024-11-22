@@ -23,6 +23,7 @@ local fontDefault <const> = gfx.getFont()
 local player = Player()
 local particles = Particles()
 local enemySpawner = Spawner(Enemy, Enemy.spawnRatePerTick)
+local human = Human()
 
 -- Create Sprite Lists
 
@@ -32,6 +33,7 @@ Bullet.createSpriteList()
 
 local function init()
     player:setParticlesSprite(particles)
+    player:setHumanSprite(human)
 
     showMenu()
 end
@@ -68,7 +70,7 @@ function playdate.update()
         gameStart()
     end
 
-    if not isMenuShowing() and player:hasDied() then
+    if not isMenuShowing() and player:getHasDied() then
         gameEnd()
     end
 end

@@ -23,19 +23,40 @@ function Player:add()
 
     self:moveTo(300, 160)
     velocity = 0
-    self._hasDied = false
+    self.hasDied = false
+end
+
+function Player:setHumanSprite(humanSprite)
+    self.spriteHuman = humanSprite
 end
 
 function Player:setParticlesSprite(particlesSprite)
     self.particlesSprite = particlesSprite
 end
 
-function Player:onDeath()
-    self._hasDied = true
+function Player:onTouchEnemy()
+    if not self.spriteHuman then
+        return
+    end
+
+    self.spriteHuman:add()
+    self.spriteHuman:moveTo(self.x, self.y)
+
+    local vX, vY = getRotationComponents(math.random() * 2 * math.pi, 1)
+    self.spriteHuman:setVelocity(vX, vY)
+
+    self.timerHumanLost = playdate.timer.new(10000, self.onDeath, self)
 end
 
-function Player:hasDied()
-    return self._hasDied
+function Player:onDeath()
+    self.timerHumanLost:remove()
+    self.timerHumanLost = nil
+
+    self.hasDied = true
+end
+
+function Player:getHasDied()
+    return self.hasDied
 end
 
 function Player:update()
@@ -78,9 +99,11 @@ function Player:update()
     local _, _, collisions = self:moveWithCollisions(self.x + vX, self.y + vY)
 
     for _, collision in pairs(collisions) do
-        if getmetatable(collision.other).class == Enemy then
-            self:onDeath()
+        if not self.timerHumanLost and getmetatable(collision.other).class == Enemy then
+            self:onTouchEnemy()
         end
+
+        -- TODO: Handle human collision
     end
 
     -- Position the particles according to crank rotation

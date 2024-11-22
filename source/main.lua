@@ -5,6 +5,7 @@ import "CoreLibs/timer"
 import "CoreLibs/animation"
 
 import "assets"
+import "extensions"
 import "sprites"
 import "menu"
 import "utils"

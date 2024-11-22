@@ -24,6 +24,7 @@ function Player:add()
     self:moveTo(300, 160)
     velocity = 0
     self.hasDied = false
+    self.disableUpdate = false
 end
 
 function Player:setHumanSprite(humanSprite)
@@ -39,13 +40,28 @@ function Player:onTouchEnemy()
         return
     end
 
+    screenShake(800, 8)
+    self.disableUpdate = true
+
+    self.timerHumanEject = playdate.timer.new(1200, function()
+        self.timerHumanEject = nil
+        self.disableUpdate = false
+    end)
+
     self.spriteHuman:add()
     self.spriteHuman:moveTo(self.x, self.y)
 
-    local vX, vY = getRotationComponents(math.random() * 2 * math.pi, 1)
+    local vX, vY = getRotationComponents(math.random() * 2 * math.pi, 1.5)
     self.spriteHuman:setVelocity(vX, vY)
 
-    self.timerHumanLost = playdate.timer.new(10000, self.onDeath, self)
+    self.timerHumanLost = playdate.timer.new(5000, self.onDeath, self)
+end
+
+function Player:onTouchHuman()
+    self.timerHumanLost:remove()
+    self.timerHumanLost = nil
+
+    self.spriteHuman:remove()
 end
 
 function Player:onDeath()
@@ -61,6 +77,10 @@ end
 
 function Player:update()
     Player.super.update(self)
+
+    if self.disableUpdate then
+        return
+    end
 
     -- Get Crank Position for rotating the sprite
 
@@ -103,7 +123,9 @@ function Player:update()
             self:onTouchEnemy()
         end
 
-        -- TODO: Handle human collision
+        if not self.timerHumanEject and self.timerHumanLost and getmetatable(collision.other).class == Human then
+            self:onTouchHuman()
+        end
     end
 
     -- Position the particles according to crank rotation
@@ -131,15 +153,5 @@ function Player:update()
 
     -- Teleport the player across the screen if they leave the bounds
 
-    if self.x < -10 then
-        self:moveTo(410, self.y)
-    elseif self.x > 410 then
-        self:moveTo(-10, self.y)
-    end
-
-    if self.y < -10 then
-        self:moveTo(self.x, 250)
-    elseif self.y > 250 then
-        self:moveTo(self.x, -10)
-    end
+    self:handleScreenWrapping()
 end

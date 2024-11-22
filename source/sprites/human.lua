@@ -12,6 +12,7 @@ function Human:init()
     Human.super.init(self)
 
     self:setSize(52, 52)
+    self:setCollideRect(10, 10, 32, 32)
 
     self.animationLoopBubble = gfx.animation.loop.new(400, imageTableBubble, true)
     self.animationLoopHuman = gfx.animation.loop.new(100, imageTableHuman, true)
@@ -33,4 +34,6 @@ function Human:update()
     self:moveBy(self.vX, self.vY)
 
     self:markDirty()
+
+    self:handleScreenWrapping()
 end

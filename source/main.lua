@@ -19,26 +19,15 @@ local sprite <const> = gfx.sprite
 
 local fontDefault <const> = gfx.getFont()
 
--- Difficulty
-
-local growthRate = 0.01
-local exponent = 0.4
-local gameStartTime
-local difficulty = 1
-
-function getDifficulty()
-    if not gameStartTime then gameStartTime = playdate.getCurrentTimeMilliseconds() end
-
-    local currentTime = playdate.getCurrentTimeMilliseconds() - gameStartTime
-    return 1 + growthRate * currentTime ^ exponent
-end
-
--- Instantiate classes
+-- Instantiate sprites
 
 local player = Player()
 local particles = Particles()
-local enemySpawner = Spawner(Enemy, Enemy.spawnRatePerTick)
 local human = Human()
+
+-- Instantiate utility classes
+local difficulty = Difficulty(0.01, 0.4)
+local enemySpawner = Spawner(Enemy, Enemy.spawnRatePerTick, difficulty)
 
 -- Create Sprite Lists
 
@@ -61,6 +50,7 @@ function gameStart()
     player:add()
     particles:add()
     enemySpawner:start()
+    difficulty:restart()
 
     Score.reset()
 end
@@ -76,13 +66,14 @@ end
 -- Update Function
 
 function playdate.update()
-    enemySpawner:update(difficulty)
+    -- Update classes
 
+    difficulty:update()
+    enemySpawner:update()
     sprite.update()
     playdate.timer.updateTimers()
 
-    difficulty = getDifficulty()
-    print(difficulty)
+    -- Drawing and scene logic
 
     fontDefault:drawTextAligned(tostring(Score.read()), 390, 8, kTextAlignment.right)
 

@@ -1,6 +1,6 @@
 local score = 0
 
-class("Score").extends()
+Score = {}
 
 -- Read Score
 

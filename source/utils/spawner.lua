@@ -2,9 +2,10 @@ local geo <const> = playdate.geometry
 
 class("Spawner").extends()
 
-function Spawner:init(spriteClass, spawnRatePerTick)
+function Spawner:init(spriteClass, spawnRatePerTick, difficulty)
     self.spriteClass = spriteClass
     self.spawnRatePerTick = spawnRatePerTick
+    self.difficulty = difficulty
 
     self.isActive = false
     self.timeNextSpawn = 0
@@ -18,7 +19,7 @@ function Spawner:stop()
     self.isActive = false
 end
 
-function Spawner:update(difficulty)
+function Spawner:update()
     -- if spawner is not active, return
     if not self.isActive then
         return
@@ -29,10 +30,13 @@ function Spawner:update(difficulty)
         -- Spawn sprite
         self:activate()
 
+        -- Get current difficulty
+        local difficulty = self.difficulty:getValue()
+
         -- Set next spawn time
         local r = math.max(math.min(math.random(), 0.8), 0.4)
         self.timeNextSpawn = playdate.getCurrentTimeMilliseconds() -
-        math.log(r) / (self.spawnRatePerTick * difficulty / 30)
+            math.log(r) / (self.spawnRatePerTick * difficulty / 30)
     end
 end
 

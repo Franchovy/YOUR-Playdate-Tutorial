@@ -18,7 +18,7 @@ function Spawner:stop()
     self.isActive = false
 end
 
-function Spawner:update()
+function Spawner:update(difficulty)
     -- if spawner is not active, return
     if not self.isActive then
         return
@@ -31,7 +31,8 @@ function Spawner:update()
 
         -- Set next spawn time
         local r = math.max(math.min(math.random(), 0.8), 0.4)
-        self.timeNextSpawn = playdate.getCurrentTimeMilliseconds() - math.log(r) / (self.spawnRatePerTick / 30)
+        self.timeNextSpawn = playdate.getCurrentTimeMilliseconds() -
+        math.log(r) / (self.spawnRatePerTick * difficulty / 30)
     end
 end
 

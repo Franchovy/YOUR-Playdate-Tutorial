@@ -7,6 +7,7 @@ function Spawner:init(spriteClass, spawnRatePerTick)
     self.spawnRatePerTick = spawnRatePerTick
 
     self.isActive = false
+    self.timeNextSpawn = 0
 end
 
 function Spawner:start()
@@ -24,8 +25,13 @@ function Spawner:update()
     end
 
     -- check if sprite should be spawned
-    if math.random() < self.spawnRatePerTick then
+    if playdate.getCurrentTimeMilliseconds() > self.timeNextSpawn then
+        -- Spawn sprite
         self:activate()
+
+        -- Set next spawn time
+        local r = math.max(math.min(math.random(), 0.8), 0.4)
+        self.timeNextSpawn = playdate.getCurrentTimeMilliseconds() - math.log(r) / (self.spawnRatePerTick / 30)
     end
 end
 

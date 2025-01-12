@@ -1,3 +1,4 @@
+local geo <const> = playdate.geometry
 
 class("Spawner").extends()
 
@@ -24,12 +25,28 @@ function Spawner:update()
 
     -- check if sprite should be spawned
     if math.random() < self.spawnRatePerTick then
-        -- spawn sprite
+        self:activate()
+    end
+end
 
-        local sprite = self.spriteClass()
+function Spawner:activate()
+    -- spawn sprite
 
+    local sprite = self.spriteClass()
+
+    -- get player
+    local player = Player.instance
+    if not player then
+        return
+    end
+
+    repeat
         -- Put sprite on screen
         sprite:moveTo(math.random(0, 400), math.random(0, 240))
-        sprite:add()
-    end
+
+        -- Check for safe distance from player, if not repeat.
+    until geo.distanceToPoint(player.x, player.y, sprite.x, sprite.y) > 50
+
+    -- Add sprite to screen
+    sprite:add()
 end

@@ -183,8 +183,28 @@ function Player:update()
 
     -- Position the ghost tower
 
-    local x, y = getRotationComponents(crankPositionRadians, 30)
-    local positionGridTowerX, positionGridTowerY = Grid.toGridCentered(self.x + x, self.y + y)
+    local x, y = getRotationComponents(crankPositionRadians, 46)
+    local positionGridTowerX, positionGridTowerY = Grid.getGridPositionCentered(self.x + x, self.y + y)
 
     self.tower:moveTo(positionGridTowerX, positionGridTowerY)
+
+    if playdate.buttonJustPressed(playdate.kButtonB) then
+        -- Check for anything in rect
+        local spritesAtRect = gfx.sprite.querySpritesInRect(positionGridTowerX + 1, positionGridTowerY + 1, Grid.size - 2,
+            Grid.size - 2)
+
+        if #spritesAtRect > 0 then
+            return
+        end
+
+        -- Create tower at location
+
+        local tower = Tower()
+        tower:add()
+        tower:moveTo(self.tower:getPosition())
+
+        Grid.addAt(positionGridTowerX, positionGridTowerY)
+
+        Grid.print()
+    end
 end

@@ -48,6 +48,7 @@ function gameStart()
     particles:add()
     --enemySpawner:start()
 
+    Grid.initialize()
     Score.reset()
 end
 

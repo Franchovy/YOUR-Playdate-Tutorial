@@ -16,10 +16,17 @@ function Player:init()
     self:setCollideRect(0, 0, self:getSize())
 
     self.collisionResponse = gfx.sprite.kCollisionTypeOverlap
+
+    self.tower = Tower()
+    self.tower:setGhost()
+    self.tower:add()
+    self.tower:moveTo(200, 200)
 end
 
 function Player:add()
     Player.super.add(self)
+
+    self.tower:add()
 
     self:moveTo(300, 160)
     velocity = 0
@@ -162,4 +169,11 @@ function Player:update()
     -- Teleport the player across the screen if they leave the bounds
 
     self:handleScreenWrapping()
+
+    -- Position the ghost tower
+
+    local x, y = getRotationComponents(crankPositionRadians, 5)
+    local positionGridTowerX, positionGridTowerY = Grid.toGrid(self.x + x, self.y + y)
+
+    self.tower:moveTo(positionGridTowerX, positionGridTowerY)
 end

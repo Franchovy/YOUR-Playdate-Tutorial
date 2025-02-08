@@ -4,5 +4,6 @@ assets = {
     bullet = "assets/bullet",
     enemy = "assets/enemy",
     bubble = "assets/player-bubble",
-    human = "assets/player-floating"
+    human = "assets/player-floating",
+    tower = "assets/tower"
 }

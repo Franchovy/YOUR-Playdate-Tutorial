@@ -10,11 +10,16 @@ local grid = {}
 
 Grid.size = GRID_SIZE
 
+---@type playdate.pathfinder.graph | nil
+local pathfindingGrid
+
 function Grid.initialize()
-    for i = 1, GRID_WIDTH do
+    pathfindingGrid = playdate.pathfinder.graph.new2DGrid(GRID_WIDTH, GRID_HEIGHT, true)
+
+    for i = 1, GRID_HEIGHT do
         table.insert(grid, {})
 
-        for j = 1, GRID_HEIGHT do
+        for j = 1, GRID_WIDTH do
             table.insert(grid[i], 0)
         end
     end
@@ -40,13 +45,47 @@ function Grid.addAt(x, y)
         return
     end
 
-    grid[gridX][gridY] = 1
+    -- Mark spot on grid
+    grid[gridY][gridX] = 1
+
+    -- Add connections to pathfinding alg
+
+    assert(pathfindingGrid, "Pathfinding Grid is missing! Call Grid.initialize()")
+
+    pathfindingGrid:removeNodeWithXY(gridX, gridY)
 end
 
 function Grid.removeAt(x, y)
     local gridX, gridY = Grid.getGridCoordinates(x, y)
 
-    grid[gridX][gridY] = 0
+    grid[gridY][gridX] = 0
+
+    -- Add node to pathfinding grid
+
+    assert(pathfindingGrid, "Pathfinding Grid is missing! Call Grid.initialize()")
+
+    local connectedNodes = {
+        pathfindingGrid:nodeWithXY(gridX - 1, gridY),     -- Center Left
+        pathfindingGrid:nodeWithXY(gridX - 1, gridY - 1), -- Top Left
+        pathfindingGrid:nodeWithXY(gridX, gridY - 1),     -- Top Center
+        pathfindingGrid:nodeWithXY(gridX + 1, gridY - 1), -- Top Right
+        pathfindingGrid:nodeWithXY(gridX + 1, gridY),     -- Center Right
+        pathfindingGrid:nodeWithXY(gridX + 1, gridY + 1), -- Bottom Right
+        pathfindingGrid:nodeWithXY(gridX, gridY + 1),     -- Bottom Center
+        pathfindingGrid:nodeWithXY(gridX - 1, gridY + 1), -- Bottom Left
+    }
+    local weights = {
+        10, -- Center Left
+        14, -- Top Left
+        10, -- Top Center
+        14, -- Top Right
+        10, -- Center Right
+        14, -- Bottom Right
+        10, -- Bottom Center
+        14, -- Bottom Left
+    }
+
+    pathfindingGrid:addNewNode(_.getNodeId(gridX, gridY), gridX, gridY, connectedNodes, weights, true)
 end
 
 function Grid.print()

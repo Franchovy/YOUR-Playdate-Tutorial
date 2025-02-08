@@ -194,6 +194,14 @@ function Player:update()
             Grid.size - 2)
 
         if #spritesAtRect > 0 then
+            for _, sprite in pairs(spritesAtRect) do
+                if getmetatable(sprite).class == Tower then
+                    sprite:remove()
+                    Grid.removeAt(positionGridTowerX, positionGridTowerY)
+                    Grid.print()
+                end
+            end
+
             return
         end
 

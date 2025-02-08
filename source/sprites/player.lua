@@ -5,6 +5,7 @@ Player = {}
 class("Player").extends(gfx.sprite)
 
 local imageSpritePlayer = gfx.image.new(assets.ship)
+local sizeCollision <const> = imageSpritePlayer:getSize() - 6
 
 local velocity = 0
 
@@ -13,7 +14,8 @@ function Player:init()
 
     Player.instance = self
 
-    self:setCollideRect(0, 0, self:getSize())
+    local offsetCollision = self:getSize() - sizeCollision
+    self:setCollideRect(offsetCollision, offsetCollision, sizeCollision, sizeCollision)
 
     self.collisionResponse = gfx.sprite.kCollisionTypeOverlap
 
@@ -32,6 +34,15 @@ function Player:add()
     velocity = 0
     self.hasDied = false
     self.disableUpdate = false
+end
+
+function Player:setRotation(angle)
+    Player.super.setRotation(self, angle)
+
+    local sizeRotatedX, sizeRotatedY = self:getSize()
+    local offsetX, offsetY = (sizeRotatedX - sizeCollision) / 2, (sizeRotatedY - sizeCollision) / 2
+
+    self:setCollideRect(offsetX, offsetY, sizeCollision, sizeCollision)
 end
 
 function Player:setHumanSprite(humanSprite)

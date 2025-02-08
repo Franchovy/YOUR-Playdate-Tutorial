@@ -183,8 +183,8 @@ function Player:update()
 
     -- Position the ghost tower
 
-    local x, y = getRotationComponents(crankPositionRadians, 5)
-    local positionGridTowerX, positionGridTowerY = Grid.toGrid(self.x + x, self.y + y)
+    local x, y = getRotationComponents(crankPositionRadians, 30)
+    local positionGridTowerX, positionGridTowerY = Grid.toGridCentered(self.x + x, self.y + y)
 
     self.tower:moveTo(positionGridTowerX, positionGridTowerY)
 end

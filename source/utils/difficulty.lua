@@ -2,8 +2,18 @@
 Difficulty = {}
 class("Difficulty").extends()
 
+-- Static instance
+
+local _instance
+
+function Difficulty.getInstance()
+    return _instance
+end
+
 function Difficulty:init(growthRate, exponent)
     Difficulty.super.init(self)
+
+    _instance = self
 
     self.growthRate = growthRate
     self.exponent = exponent

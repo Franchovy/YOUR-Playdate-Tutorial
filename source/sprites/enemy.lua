@@ -1,8 +1,13 @@
 local gfx <const> = playdate.graphics
+local geo <const> = playdate.geometry
 
 local imagetableEnemy <const> = gfx.imagetable.new(assets.enemy)
 
-local speed <const> = 1
+-- local constants
+
+local speedMovement <const> = 28
+local durationMovement <const> = 1800
+local durationMovementDelay <const> = 300
 
 class("Enemy").extends(gfx.sprite)
 
@@ -25,16 +30,33 @@ function Enemy:destroy()
 end
 
 function Enemy:update()
-    -- Get the player
-    local player = Player.instance
-    if player and not player:getHasDied() then
-        -- Calculate path to player
-        local targetX, targetY = player.x, player.y
-        local angle = math.atan(targetY - self.y, targetX - self.x)
-        local x, y = getRotationComponents(angle, speed)
+    if self.animatorMovement then
+        local pointDestination = self.animatorMovement:currentValue()
 
-        -- Move to player
-        self:moveBy(x, y)
+        self:moveTo(pointDestination.x, pointDestination.y)
+
+        if self.animatorMovement:ended() then
+            self.animatorMovement = nil
+        end
+    else
+        -- Get the player
+        local player = Player.getInstance()
+        if player and not player:getHasDied() then
+            -- Calculate path to player
+            local xPlayer, yPlayer = player.x, player.y
+            local angle = math.atan(yPlayer - self.y, xPlayer - self.x)
+            local xTarget, yTarget = getRotationComponents(angle, speedMovement)
+
+            -- Get difficulty value
+            local valueDifficulty = Difficulty.getInstance():getValue()
+            local durationAnimator = durationMovement / valueDifficulty
+            local durationAnimatorDelay = durationMovementDelay / valueDifficulty
+
+            -- Set the animator to target point
+            self.animatorMovement = gfx.animator.new(durationAnimator, geo.point.new(self.x, self.y),
+                geo.point.new(self.x + xTarget, self.y + yTarget), playdate.easingFunctions.outExpo,
+                durationAnimatorDelay)
+        end
     end
 
     -- Set the sprite image

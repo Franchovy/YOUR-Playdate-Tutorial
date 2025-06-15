@@ -46,7 +46,7 @@ function Spawner:activate()
     local sprite = self.spriteClass()
 
     -- get player
-    local player = Player.instance
+    local player = Player.getInstance()
     if not player then
         return
     end

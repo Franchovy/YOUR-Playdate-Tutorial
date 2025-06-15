@@ -5,6 +5,14 @@ local geo <const> = playdate.geometry
 Player = {}
 class("Player").extends(gfx.sprite)
 
+-- Static instance
+
+local _instance
+
+function Player.getInstance()
+    return _instance
+end
+
 -- Assets
 
 local imageSpritePlayer <const> = gfx.image.new(assets.ship)
@@ -22,7 +30,7 @@ local velocity = geo.vector2D.new(0, 0)
 function Player:init()
     Player.super.init(self, imageSpritePlayer)
 
-    Player.instance = self
+    _instance = self
 
     self:setCollideRect(0, 0, self:getSize())
 

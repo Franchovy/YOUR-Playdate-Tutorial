@@ -1,12 +1,16 @@
 local gfx <const> = playdate.graphics
+local geo <const> = playdate.geometry
 
 --- @class Player : playdate.graphics.sprite
 Player = {}
 class("Player").extends(gfx.sprite)
 
-local imageSpritePlayer = gfx.image.new(assets.ship)
+local imageSpritePlayer <const> = gfx.image.new(assets.ship)
 
-local velocity = 0
+local slowdownPerFrame <const> = 0.2
+local accelerationPerFrameMax <const> = 1.8
+
+local velocity = geo.vector2D.new(0, 0)
 
 function Player:init()
     Player.super.init(self, imageSpritePlayer)
@@ -22,9 +26,10 @@ function Player:add()
     Player.super.add(self)
 
     self:moveTo(300, 160)
-    velocity = 0
     self.hasDied = false
     self.disableUpdate = false
+
+    velocity = geo.vector2D.new(0, 0)
 end
 
 function Player:setHumanSprite(humanSprite)
@@ -103,12 +108,6 @@ function Player:update()
 
     local isAButtonPressed = playdate.buttonIsPressed(playdate.kButtonA)
 
-    if isAButtonPressed then
-        velocity = 5
-    else
-        velocity = 0
-    end
-
     -- Get B button state for spawning bullet
 
     local isBButtonPressed = playdate.buttonJustPressed(playdate.kButtonB)
@@ -120,11 +119,17 @@ function Player:update()
         local _ = Bullet.spawn(self.x, self.y, velX, velY)
     end
 
-    -- Move the player according to crank rotation
+    -- Calculate Velocity
 
-    local vX, vY = getRotationComponents(crankPositionRadians, velocity)
+    velocity = velocity * (1 - slowdownPerFrame)
 
-    local _, _, collisions = self:moveWithCollisions(self.x + vX, self.y + vY)
+    if isAButtonPressed then
+        velocity = velocity + geo.vector2D.newPolar(accelerationPerFrameMax, crankPosition + 90)
+    end
+
+    -- Move & Collisions
+
+    local _, _, collisions = self:moveWithCollisions(self.x + velocity.dx, self.y + velocity.dy)
 
     for _, collision in pairs(collisions) do
         if not self.timerHumanLost and getmetatable(collision.other).class == Enemy then

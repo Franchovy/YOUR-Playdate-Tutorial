@@ -5,10 +5,17 @@ local geo <const> = playdate.geometry
 Player = {}
 class("Player").extends(gfx.sprite)
 
+-- Assets
+
 local imageSpritePlayer <const> = gfx.image.new(assets.ship)
+
+-- Local constants
 
 local slowdownPerFrame <const> = 0.2
 local accelerationPerFrameMax <const> = 1.8
+local speedBulletMax <const> = 13
+
+-- Local/Static variables
 
 local velocity = geo.vector2D.new(0, 0)
 
@@ -113,7 +120,7 @@ function Player:update()
     local isBButtonPressed = playdate.buttonJustPressed(playdate.kButtonB)
 
     if isBButtonPressed then
-        local velX, velY = getRotationComponents(crankPositionRadians, 7.5)
+        local velX, velY = getRotationComponents(crankPositionRadians, speedBulletMax)
 
         -- Spawn Bullet
         local _ = Bullet.spawn(self.x, self.y, velX, velY)

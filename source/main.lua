@@ -6,6 +6,7 @@ import "CoreLibs/animation"
 
 import "const"
 import "assets"
+import "libs"
 import "extensions"
 import "sprites"
 import "menu"

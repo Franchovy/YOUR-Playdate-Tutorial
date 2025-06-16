@@ -1,20 +1,20 @@
 local gfx <const> = playdate.graphics
 
---- @class Enemy : playdate.graphics.sprite
+--- @class Enemy : AnimatedSprite
 Enemy = {}
-class("Enemy").extends(gfx.sprite)
+class("Enemy").extends(AnimatedSprite)
 
 local scoreKill = 0
 local target = nil
 
 local timeLastTargetRefresh
 
-function Enemy:init(image)
-    Enemy.super.init(self, image)
+function Enemy:init(imagetable)
+    Enemy.super.init(self, imagetable)
 
     -- Collision Config
 
-    self:setCollideRect(0, 0, self:getSize())
+    self:setCollideRect(0, 0, imagetable[1]:getSize())
     self:setGroups(COLLISION_GROUPS.Enemies)
 end
 
@@ -39,6 +39,8 @@ function Enemy:getTarget()
 end
 
 function Enemy:update()
+    Enemy.super.update(self)
+
     if not timeLastTargetRefresh or timeLastTargetRefresh < playdate.getCurrentTimeMilliseconds() then
         local player = Player.getInstance()
 

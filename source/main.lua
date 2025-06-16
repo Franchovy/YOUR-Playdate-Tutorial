@@ -27,7 +27,7 @@ local human = Human()
 
 -- Instantiate utility classes
 local difficulty = Difficulty(0.01, 0.4)
-local enemySpawner = Spawner(Enemy, Enemy.spawnRatePerTick, difficulty)
+local enemySpawner = Spawner(Jellyfish, Jellyfish.spawnRatePerTick, difficulty)
 
 -- Create Sprite Lists
 

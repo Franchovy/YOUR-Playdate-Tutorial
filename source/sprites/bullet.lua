@@ -9,6 +9,8 @@ local spriteListBulletCount <const> = 25
 
 local spriteListBullet
 
+--- @class Bullet : playdate.graphics.sprite
+Bullet = {}
 class("Bullet").extends(gfx.sprite)
 
 function Bullet.createSpriteList()
@@ -25,7 +27,11 @@ function Bullet:init()
     self.velocityX = 0
     self.velocityY = 0
 
+    -- Collision config
+
     self:setCollideRect(0, 0, self:getSize())
+    self:setGroups(COLLISION_GROUPS.Bullet)
+    self:setCollidesWithGroups(COLLISION_GROUPS.Enemies)
 end
 
 function Bullet:collisionResponse(other)
@@ -72,9 +78,10 @@ function Bullet:update()
     for _, collision in pairs(collisions) do
         local other = collision.other
 
-        if getmetatable(other).class == Enemy then
-            other:destroy()
-            self:destroy()
+        if other.onBulletCollision then
+            other:onBulletCollision()
         end
+
+        self:destroy()
     end
 end

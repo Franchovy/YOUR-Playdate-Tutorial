@@ -32,8 +32,11 @@ function Player:init()
 
     _instance = self
 
-    self:setCollideRect(0, 0, self:getSize())
+    -- Collision config
 
+    self:setCollideRect(0, 0, self:getSize())
+    self:setGroups(COLLISION_GROUPS.Player)
+    self:setCollidesWithGroups({ COLLISION_GROUPS.Enemies, COLLISION_GROUPS.Human })
     self.collisionResponse = gfx.sprite.kCollisionTypeOverlap
 end
 
@@ -78,15 +81,19 @@ function Player:onTouchEnemy()
 end
 
 function Player:onTouchHuman()
-    self.timerHumanLost:remove()
-    self.timerHumanLost = nil
+    if self.timerHumanLost then
+        self.timerHumanLost:remove()
+        self.timerHumanLost = nil
+    end
 
     self.spriteHuman:remove()
 end
 
 function Player:onDeath()
-    self.timerHumanLost:remove()
-    self.timerHumanLost = nil
+    if self.timerHumanLost then
+        self.timerHumanLost:remove()
+        self.timerHumanLost = nil
+    end
 
     self.hasDied = true
 end
@@ -147,11 +154,11 @@ function Player:update()
     local _, _, collisions = self:moveWithCollisions(self.x + velocity.dx, self.y + velocity.dy)
 
     for _, collision in pairs(collisions) do
-        if not self.timerHumanLost and getmetatable(collision.other).class == Jellyfish then
+        if not self.timerHumanLost and collision.other:hasGroup(COLLISION_GROUPS.Enemies) then
             self:onTouchEnemy()
         end
 
-        if not self.timerHumanEject and self.timerHumanLost and getmetatable(collision.other).class == Human then
+        if not self.timerHumanEject and self.timerHumanLost and collision.other:hasGroup(COLLISION_GROUPS.Human) then
             self:onTouchHuman()
         end
     end

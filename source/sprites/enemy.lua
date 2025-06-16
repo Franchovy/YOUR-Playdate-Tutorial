@@ -12,7 +12,14 @@ local timeLastTargetRefresh
 function Enemy:init(image)
     Enemy.super.init(self, image)
 
+    -- Collision Config
+
     self:setCollideRect(0, 0, self:getSize())
+    self:setGroups(COLLISION_GROUPS.Enemies)
+end
+
+function Enemy:onBulletCollision()
+    self:destroy()
 end
 
 function Enemy:destroy()

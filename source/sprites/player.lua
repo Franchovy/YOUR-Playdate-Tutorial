@@ -110,6 +110,10 @@ function Player:getHasDied()
     return self.hasDied
 end
 
+function Player:onBulletCollision()
+    self:onTouchEnemy()
+end
+
 function Player:update()
     Player.super.update(self)
 
@@ -138,7 +142,7 @@ function Player:update()
         local velX, velY = getRotationComponents(crankPositionRadians, speedBulletMax)
 
         -- Spawn Bullet
-        local _ = Bullet.spawn(self.x, self.y, velX, velY)
+        local _ = Bullet.spawn(self.x, self.y, velX, velY, COLLISION_GROUPS.Enemies)
     end
 
     -- Calculate Velocity

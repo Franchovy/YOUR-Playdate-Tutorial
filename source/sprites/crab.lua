@@ -1,8 +1,10 @@
 local gfx <const> = playdate.graphics
 
 local imagetableCrab <const> = assert(gfx.imagetable.new(assets.crab))
+local imageBullet <const> = assert(gfx.image.new(assets.bulletCrab))
 
 local speedMovement <const> = 1
+local speedBullet <const> = 7
 
 local ANIMATION_STATES <const> = {
     Moving = 'moving',
@@ -27,23 +29,23 @@ end
 function Crab:onShootFrameChanged()
     if self._currentFrame == 5 then
         -- Shoot the bullet
-        print("HAAAAAA!!!!")
+        local angleTarget = self:getTargetDirection()
+        local velX, velY = getRotationComponents(angleTarget, speedBullet)
+
+        Bullet.spawn(self.x, self.y, velX, velY, COLLISION_GROUPS.Player, imageBullet)
     end
 end
 
 function Crab:update()
     Crab.super.update(self)
 
-    local target = self:getTarget()
+    local angleTarget, distanceToTarget = self:getTargetDirection()
 
-    if target then
-        -- Calculate path to player
-        local xTarget, yTarget = target.x, target.y
-        local angle = math.atan(yTarget - self.y, xTarget - self.x)
-        local xMovement, yMovement = getRotationComponents(angle, speedMovement)
+    if angleTarget then
+        -- Calculate movement towards target
+        local xMovement, yMovement = getRotationComponents(angleTarget, speedMovement)
 
-        local distanceToPlayer = math.sqrt((yTarget - self.y) ^ 2 + (xTarget - self.x) ^ 2)
-        if distanceToPlayer > 100 then
+        if distanceToTarget > 100 then
             -- Move to player
             self:moveBy(xMovement, yMovement)
 
@@ -53,7 +55,7 @@ function Crab:update()
         end
 
         -- Rotate self
-        local angleDegrees = math.deg(angle)
+        local angleDegrees = math.deg(angleTarget)
         self:setRotation(angleDegrees + 90)
     end
 end

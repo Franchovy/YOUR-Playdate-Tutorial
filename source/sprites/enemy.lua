@@ -38,6 +38,19 @@ function Enemy:getTarget()
     return target
 end
 
+function Enemy:getTargetDirection()
+    local target = self:getTarget()
+
+    if target then
+        -- Calculate angle towards target
+        local distanceY = target.y - self.y
+        local distanceX = target.x - self.x
+        return math.atan(distanceY, distanceX), math.sqrt(distanceX ^ 2 + distanceY ^ 2)
+    end
+
+    return nil
+end
+
 function Enemy:update()
     Enemy.super.update(self)
 

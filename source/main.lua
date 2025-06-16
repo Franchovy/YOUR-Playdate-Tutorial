@@ -27,7 +27,8 @@ local human = Human()
 
 -- Instantiate utility classes
 local difficulty = Difficulty(0.01, 0.4)
-local enemySpawner = Spawner(Jellyfish, Jellyfish.spawnRatePerTick, difficulty)
+local spawnerJellyfish = Spawner(Jellyfish, Jellyfish.spawnRatePerTick, difficulty)
+local spawnerCrab = Spawner(Crab, Crab.spawnRatePerTick, difficulty)
 
 -- Create Sprite Lists
 
@@ -49,7 +50,8 @@ function gameStart()
 
     player:add()
     particles:add()
-    enemySpawner:start()
+    Spawner.startAll()
+
     difficulty:restart()
 
     Score.reset()
@@ -60,7 +62,7 @@ function gameEnd()
 
     player:remove()
     particles:remove()
-    enemySpawner:stop()
+    Spawner.stopAll()
 end
 
 -- Update Function
@@ -69,7 +71,7 @@ function playdate.update()
     -- Update classes
 
     difficulty:update()
-    enemySpawner:update()
+    Spawner.updateAll()
     sprite.update()
     playdate.timer.updateTimers()
 

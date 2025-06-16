@@ -1,6 +1,32 @@
 local geo <const> = playdate.geometry
 
+--- @class Spawner
+Spawner = {}
 class("Spawner").extends()
+
+-- Static Methods
+
+local spawners <const> = {}
+
+function Spawner.startAll()
+    for _, v in pairs(spawners) do
+        v:start()
+    end
+end
+
+function Spawner.stopAll()
+    for _, v in pairs(spawners) do
+        v:stop()
+    end
+end
+
+function Spawner.updateAll()
+    for _, v in pairs(spawners) do
+        v:update()
+    end
+end
+
+-- Instance Methods
 
 function Spawner:init(spriteClass, spawnRatePerTick, difficulty)
     self.spriteClass = spriteClass
@@ -9,6 +35,8 @@ function Spawner:init(spriteClass, spawnRatePerTick, difficulty)
 
     self.isActive = false
     self.timeNextSpawn = 0
+
+    table.insert(spawners, self)
 end
 
 function Spawner:start()

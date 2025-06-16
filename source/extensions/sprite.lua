@@ -11,3 +11,7 @@ function playdate.graphics.sprite:handleScreenWrapping()
         self:moveTo(self.x, -10)
     end
 end
+
+function playdate.graphics.sprite:hasGroup(group)
+    return self:getGroupMask() & 2 ^ (group - 1) ~= 0
+end

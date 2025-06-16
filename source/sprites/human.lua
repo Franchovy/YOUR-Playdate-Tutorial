@@ -12,7 +12,10 @@ function Human:init()
     Human.super.init(self)
 
     self:setSize(52, 52)
+
+    -- Collision Config
     self:setCollideRect(10, 10, 32, 32)
+    self:setGroups(COLLISION_GROUPS.Human)
 
     self.animationLoopBubble = gfx.animation.loop.new(400, imageTableBubble, true)
     self.animationLoopHuman = gfx.animation.loop.new(100, imageTableHuman, true)

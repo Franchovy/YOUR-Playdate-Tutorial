@@ -13,6 +13,8 @@ local spriteListBullet
 Bullet = {}
 class("Bullet").extends(gfx.sprite)
 
+-- Static methods
+
 function Bullet.createSpriteList()
     spriteListBullet = table.create(spriteListBulletCount, 0)
 
@@ -20,6 +22,38 @@ function Bullet.createSpriteList()
         table.insert(spriteListBullet, Bullet())
     end
 end
+
+function Bullet.spawn(posX, posY, velX, velY, collidesWithGroups, image)
+    -- Retrieve a bullet from the list
+
+    local bullet = table.remove(spriteListBullet)
+
+    -- Set image
+
+    bullet:setImage(image or imageBullet)
+    bullet:setCollideRect(0, 0, bullet:getSize())
+
+    -- Set collision groups
+
+    bullet:setCollidesWithGroups(collidesWithGroups)
+
+    -- Add bullet to the scene
+
+    bullet:add()
+    bullet:moveTo(posX, posY)
+
+    bullet.velocityX = velX
+    bullet.velocityY = velY
+
+    -- Set rotation
+
+    local angle = math.atan(velY, velX)
+    bullet:setRotation(math.deg(angle) + 90)
+
+    bullet.destroyTimer = playdate.timer.new(4000, bullet.destroy, bullet)
+end
+
+-- Instance methods
 
 function Bullet:init()
     Bullet.super.init(self, imageBullet)
@@ -53,21 +87,6 @@ function Bullet:destroy()
         self.destroyTimer:remove()
         self.destroyTimer = nil
     end
-end
-
-function Bullet.spawn(posX, posY, velX, velY)
-    -- Retrieve a bullet from the list
-
-    local bullet = table.remove(spriteListBullet)
-
-    -- Add bullet to the scene
-
-    bullet:add()
-    bullet:moveTo(posX, posY)
-    bullet.velocityX = velX
-    bullet.velocityY = velY
-
-    bullet.destroyTimer = playdate.timer.new(4000, bullet.destroy, bullet)
 end
 
 function Bullet:update()

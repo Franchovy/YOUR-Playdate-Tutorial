@@ -3,7 +3,8 @@ local gfx <const> = playdate.graphics
 local imagetableCrab <const> = assert(gfx.imagetable.new(assets.crab))
 local imageBullet <const> = assert(gfx.image.new(assets.bulletCrab))
 
-local speedMovement <const> = 1
+local speedMovement1 <const> = 3
+local speedMovement2 <const> = 1
 local speedBullet <const> = 7
 
 local ANIMATION_STATES <const> = {
@@ -41,9 +42,23 @@ function Crab:update()
 
     local angleTarget, distanceToTarget = self:getTargetDirection()
 
-    if angleTarget then
+    if not angleTarget then
+        return
+    end
+
+    if Player:getInstance():getIsHumanMissing() then
+        if distanceToTarget > 16 then
+            -- Behavior 1:  Chase player and slow them down
+            local xMovement, yMovement = getRotationComponents(angleTarget, speedMovement1)
+
+            self:changeState(ANIMATION_STATES.Moving)
+            self:moveBy(xMovement, yMovement)
+        end
+    else
+        -- Behavior 2: Stalk player and shoot them
+
         -- Calculate movement towards target
-        local xMovement, yMovement = getRotationComponents(angleTarget, speedMovement)
+        local xMovement, yMovement = getRotationComponents(angleTarget, speedMovement2)
 
         if distanceToTarget > 100 then
             -- Move to player
@@ -53,9 +68,9 @@ function Crab:update()
         else
             self:changeState(ANIMATION_STATES.Shooting)
         end
-
-        -- Rotate self
-        local angleDegrees = math.deg(angleTarget)
-        self:setRotation(angleDegrees + 90)
     end
+
+    -- Rotate self
+    local angleDegrees = math.deg(angleTarget)
+    self:setRotation(angleDegrees + 90)
 end

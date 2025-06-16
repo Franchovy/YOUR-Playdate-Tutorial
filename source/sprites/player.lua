@@ -22,6 +22,7 @@ local imageSpritePlayer <const> = gfx.image.new(assets.ship)
 local slowdownPerFrame <const> = 0.2
 local accelerationPerFrameMax <const> = 1.8
 local speedBulletMax <const> = 13
+local coefficientSlowDownEnemy <const> = 0.3
 
 -- Local/Static variables
 
@@ -38,6 +39,10 @@ function Player:init()
     self:setGroups(COLLISION_GROUPS.Player)
     self:setCollidesWithGroups({ COLLISION_GROUPS.Enemies, COLLISION_GROUPS.Human })
     self.collisionResponse = gfx.sprite.kCollisionTypeOverlap
+
+    -- State variables
+
+    self.coefficientSlowDown = 1
 end
 
 function Player:add()
@@ -58,7 +63,7 @@ function Player:setParticlesSprite(particlesSprite)
     self.particlesSprite = particlesSprite
 end
 
-function Player:onTouchEnemy()
+function Player:loseHuman()
     if not self.spriteHuman then
         return
     end
@@ -111,7 +116,11 @@ function Player:getHasDied()
 end
 
 function Player:onBulletCollision()
-    self:onTouchEnemy()
+    self:loseHuman()
+end
+
+function Player:getIsHumanMissing()
+    return self.timerHumanLost ~= nil
 end
 
 function Player:update()
@@ -150,16 +159,25 @@ function Player:update()
     velocity = velocity * (1 - slowdownPerFrame)
 
     if isAButtonPressed then
-        velocity = velocity + geo.vector2D.newPolar(accelerationPerFrameMax, crankPosition + 90)
+        velocity = velocity +
+            geo.vector2D.newPolar(accelerationPerFrameMax * self.coefficientSlowDown, crankPosition + 90)
     end
+
+    -- Reset velocity coefficient
+
+    self.coefficientSlowDown = 1
 
     -- Move & Collisions
 
     local _, _, collisions = self:moveWithCollisions(self.x + velocity.dx, self.y + velocity.dy)
 
     for _, collision in pairs(collisions) do
-        if not self.timerHumanLost and collision.other:hasGroup(COLLISION_GROUPS.Enemies) then
-            self:onTouchEnemy()
+        if collision.other:hasGroup(COLLISION_GROUPS.Enemies) then
+            if not self.timerHumanLost then
+                self:loseHuman()
+            else
+                self.coefficientSlowDown = coefficientSlowDownEnemy
+            end
         end
 
         if not self.timerHumanEject and self.timerHumanLost and collision.other:hasGroup(COLLISION_GROUPS.Human) then

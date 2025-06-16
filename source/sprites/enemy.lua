@@ -1,64 +1,46 @@
 local gfx <const> = playdate.graphics
-local geo <const> = playdate.geometry
 
-local imagetableEnemy <const> = gfx.imagetable.new(assets.enemy)
-
--- local constants
-
-local speedMovement <const> = 28
-local durationMovement <const> = 1800
-local durationMovementDelay <const> = 300
-
+--- @class Enemy : playdate.graphics.sprite
+Enemy = {}
 class("Enemy").extends(gfx.sprite)
 
-Enemy.spawnRatePerTick = 0.008
+local scoreKill = 0
+local target = nil
 
-function Enemy:init()
-    Enemy.super.init(self, imagetableEnemy[1])
+local timeLastTargetRefresh
+
+function Enemy:init(image)
+    Enemy.super.init(self, image)
 
     self:setCollideRect(0, 0, self:getSize())
-
-    -- Create animation loop
-
-    self.animationLoop = gfx.animation.loop.new(500, imagetableEnemy)
 end
 
 function Enemy:destroy()
-    Score.update(50)
+    local scoreKill = self:getScoreValue()
+
+    Score.update(scoreKill)
 
     self:remove()
 end
 
+function Enemy:getScoreValue()
+    return scoreKill
+end
+
+function Enemy:getTarget()
+    return target
+end
+
 function Enemy:update()
-    if self.animatorMovement then
-        local pointDestination = self.animatorMovement:currentValue()
-
-        self:moveTo(pointDestination.x, pointDestination.y)
-
-        if self.animatorMovement:ended() then
-            self.animatorMovement = nil
-        end
-    else
-        -- Get the player
+    if not timeLastTargetRefresh or timeLastTargetRefresh < playdate.getCurrentTimeMilliseconds() then
         local player = Player.getInstance()
+
         if player and not player:getHasDied() then
-            -- Calculate path to player
-            local xPlayer, yPlayer = player.x, player.y
-            local angle = math.atan(yPlayer - self.y, xPlayer - self.x)
-            local xTarget, yTarget = getRotationComponents(angle, speedMovement)
-
-            -- Get difficulty value
-            local valueDifficulty = Difficulty.getInstance():getValue()
-            local durationAnimator = durationMovement / valueDifficulty
-            local durationAnimatorDelay = durationMovementDelay / valueDifficulty
-
-            -- Set the animator to target point
-            self.animatorMovement = gfx.animator.new(durationAnimator, geo.point.new(self.x, self.y),
-                geo.point.new(self.x + xTarget, self.y + yTarget), playdate.easingFunctions.outExpo,
-                durationAnimatorDelay)
+            target = player
+        else
+            target = nil
         end
-    end
 
-    -- Set the sprite image
-    self:setImage(self.animationLoop:image())
+        timeLastTargetRefresh = playdate.getCurrentTimeMilliseconds()
+    end
 end

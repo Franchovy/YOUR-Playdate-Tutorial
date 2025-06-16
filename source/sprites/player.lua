@@ -147,7 +147,7 @@ function Player:update()
     local _, _, collisions = self:moveWithCollisions(self.x + velocity.dx, self.y + velocity.dy)
 
     for _, collision in pairs(collisions) do
-        if not self.timerHumanLost and getmetatable(collision.other).class == Enemy then
+        if not self.timerHumanLost and getmetatable(collision.other).class == Jellyfish then
             self:onTouchEnemy()
         end
 

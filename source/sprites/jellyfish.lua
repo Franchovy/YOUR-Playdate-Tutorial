@@ -1,7 +1,7 @@
 local gfx <const> = playdate.graphics
 local geo <const> = playdate.geometry
 
-local imagetableEnemy <const> = assert(gfx.imagetable.new(assets.enemy))
+local imagetableJellyfish <const> = assert(gfx.imagetable.new(assets.jellyfish))
 
 -- local constants
 
@@ -16,11 +16,11 @@ class("Jellyfish").extends(Enemy)
 Jellyfish.spawnRatePerTick = 0.008
 
 function Jellyfish:init()
-    Jellyfish.super.init(self, imagetableEnemy[1])
+    Jellyfish.super.init(self, imagetableJellyfish[1])
 
     -- Create animation loop
 
-    self.animationLoop = gfx.animation.loop.new(500, imagetableEnemy)
+    self.animationLoop = gfx.animation.loop.new(500, imagetableJellyfish)
 end
 
 function Jellyfish:getScoreValue()

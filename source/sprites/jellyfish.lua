@@ -16,11 +16,9 @@ class("Jellyfish").extends(Enemy)
 Jellyfish.spawnRatePerTick = 0.008
 
 function Jellyfish:init()
-    Jellyfish.super.init(self, imagetableJellyfish[1])
+    Jellyfish.super.init(self, imagetableJellyfish)
 
-    -- Create animation loop
-
-    self.animationLoop = gfx.animation.loop.new(500, imagetableJellyfish)
+    self:addState('idle', 1, 2, { tickStep = 16 }, true)
 end
 
 function Jellyfish:getScoreValue()
@@ -59,7 +57,4 @@ function Jellyfish:update()
                 durationAnimatorDelay)
         end
     end
-
-    -- Set the sprite image
-    self:setImage(self.animationLoop:image())
 end
